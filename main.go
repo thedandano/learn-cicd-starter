@@ -7,14 +7,23 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
+	"time"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
 	"github.com/joho/godotenv"
+	"go.uber.org/zap"
 
 	"github.com/bootdotdev/learn-cicd-starter/internal/database"
 
 	_ "github.com/tursodatabase/libsql-client-go/libsql"
+)
+
+const (
+	readHeaderTimeout = 10 * time.Second
+	minPort           = 1
+	maxPort           = 65535
 )
 
 type apiConfig struct {
@@ -25,6 +34,9 @@ type apiConfig struct {
 var staticFiles embed.FS
 
 func main() {
+	logger, _ := zap.NewProduction()
+	defer logger.Sync()
+
 	err := godotenv.Load(".env")
 	if err != nil {
 		log.Printf("warning: assuming default configuration. .env unreadable: %v", err)
@@ -33,6 +45,10 @@ func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
 		log.Fatal("PORT environment variable is not set")
+	}
+	portNum, err := strconv.Atoi(port)
+	if err != nil || portNum < minPort || portNum > maxPort {
+		log.Fatalf("PORT must be a valid number between %d and %d", minPort, maxPort)
 	}
 
 	apiCfg := apiConfig{}
@@ -89,10 +105,11 @@ func main() {
 
 	router.Mount("/v1", v1Router)
 	srv := &http.Server{
-		Addr:    ":" + port,
-		Handler: router,
+		Addr:              ":" + port,
+		Handler:           router,
+		ReadHeaderTimeout: readHeaderTimeout,
 	}
 
-	log.Printf("Serving on port: %s\n", port)
+	logger.Info("Server starting", zap.Int("port", portNum))
 	log.Fatal(srv.ListenAndServe())
 }

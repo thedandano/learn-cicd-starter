@@ -28,6 +28,20 @@ github.com/tursodatabase/libsql-client-go/libsql/internal/http
 github.com/tursodatabase/libsql-client-go/libsql/internal/http/hranaV2
 github.com/tursodatabase/libsql-client-go/libsql/internal/http/shared
 github.com/tursodatabase/libsql-client-go/libsql/internal/ws
+# go.uber.org/multierr v1.10.0
+## explicit; go 1.19
+go.uber.org/multierr
+# go.uber.org/zap v1.27.1
+## explicit; go 1.19
+go.uber.org/zap
+go.uber.org/zap/buffer
+go.uber.org/zap/internal
+go.uber.org/zap/internal/bufferpool
+go.uber.org/zap/internal/color
+go.uber.org/zap/internal/exit
+go.uber.org/zap/internal/pool
+go.uber.org/zap/internal/stacktrace
+go.uber.org/zap/zapcore
 # golang.org/x/exp v0.0.0-20220722155223-a9213eeb770e
 ## explicit; go 1.18
 golang.org/x/exp/constraints
