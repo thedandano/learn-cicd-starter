@@ -6,6 +6,12 @@ import (
 	"net/http"
 )
 
+func writeResponse(w http.ResponseWriter, data []byte) {
+	if _, err := w.Write(data); err != nil { // #nosec G705 -- JSON-encoded data is safe from XSS
+		log.Printf("Error writing response: %s", err)
+	}
+}
+
 func respondWithError(w http.ResponseWriter, code int, msg string, logErr error) {
 	if logErr != nil {
 		log.Println(logErr)
@@ -30,5 +36,5 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 		return
 	}
 	w.WriteHeader(code)
-	w.Write(dat)
+	writeResponse(w, dat)
 }
